@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 namespace :debug_transaction do
   task ar_base: ['environment'] do
     
@@ -67,6 +68,43 @@ namespace :debug_transaction do
     end
 
   end
+
+  task distribute_01: ['environment'] do
+    student = Student.find_by_name('Jim')
+    course = Course.find_by_name('数学课')
+
+    puts "before student.units: #{student.units}"
+    puts "before StudentCourse.all.to_a: #{StudentCourse.all.to_a}"
+
+    Student.transaction do
+      course.enroll(student)
+      student.units += course.units
+      student.save
+
+      raise 'debug distribute 01 transactions'
+    end
+    
+  end
+
+  task distribute_02: ['environment'] do
+    student = Student.find_by_name('Jim')
+    course = Course.find_by_name('数学课')
+
+    puts "before student.units: #{student.units}"
+    puts "before StudentCourse.all.to_a: #{StudentCourse.all.to_a}"
+
+    Student.transaction do
+      StudentCourse.transaction do
+        course.enroll(student)
+        student.units += course.units
+        student.save
+
+        raise 'debug distribute 02 transactions'
+      end
+    end
+    
+  end
+
 
   
 end
