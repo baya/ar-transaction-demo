@@ -105,6 +105,10 @@ namespace :debug_transaction do
     
   end
 
+  task for_save: ['environment'] do
+    # Account.create(name: 'kyk01')
+    Account.create(name: 'kyk02')
+  end
 
   
 end
