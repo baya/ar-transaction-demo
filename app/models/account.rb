@@ -17,11 +17,12 @@ class Account < ActiveRecord::Base
   
   def create_op_log_for_save
     AccountOpLog.create(action: 'save', account_id: self.id)
-    raise 'boom!'
+    # raise 'boom!'
   end
 
   def create_op_log_for_destroy
     AccountOpLog.create(action: 'destroy', account_id: self.id)
+    raise 'boom!'
   end
   
 end

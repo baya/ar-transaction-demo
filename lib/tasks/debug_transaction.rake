@@ -110,5 +110,55 @@ namespace :debug_transaction do
     Account.create(name: 'kyk02')
   end
 
+  task for_destroy: ['environment'] do
+    account = Account.find_by(name: 'kyk03')
+    account ||= Account.create(name: 'kyk03')
+
+    account.destroy
+  end
+
+  task for_rollback_exception: ['environment'] do
+    begin
+      Number.transaction do
+        Number.create(i: 0)
+        Number.create(i: 1)
+        # raise ActiveRecord::Rollback
+        raise 'boom!'
+      end
+    rescue Exception => e
+      puts e.message
+    end
+
+  end
+
+  task for_create: ['environment'] do
+
+    Number.transaction do
+      Number.create(i: 0)
+      Number.create(i: 0)
+    end
+    
+  end
+
+  task for_pg: ['environment'] do
+    # Suppose that we have a Number model with a unique column called 'i'.
+    Number.transaction do
+      Number.create(i: 3)
+      begin
+        # This will raise a unique constraint error...
+        Number.create!(i: 3)
+      rescue ActiveRecord::StatementInvalid => e
+        puts e.message
+      end
+
+      # On PostgreSQL, the transaction is now unusable. The following
+      # statement will cause a PostgreSQL error, even though the unique
+      # constraint is no longer violated:
+      Number.create(i: 4)
+      # => "PGError: ERROR:  current transaction is aborted, commands
+      #     ignored until end of transaction block"
+    end
+  end
+
   
 end
