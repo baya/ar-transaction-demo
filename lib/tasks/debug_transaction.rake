@@ -143,18 +143,19 @@ namespace :debug_transaction do
   task for_pg: ['environment'] do
     # Suppose that we have a Number model with a unique column called 'i'.
     Number.transaction do
-      Number.create(i: 3)
+      Number.create(i: 6)
       begin
         # This will raise a unique constraint error...
-        Number.create!(i: 3)
+        Number.create!(i: 6)
       rescue ActiveRecord::StatementInvalid => e
+        puts "+++++++++++++++"
         puts e.message
       end
 
       # On PostgreSQL, the transaction is now unusable. The following
       # statement will cause a PostgreSQL error, even though the unique
       # constraint is no longer violated:
-      Number.create(i: 4)
+      Number.create(i: 7)
       # => "PGError: ERROR:  current transaction is aborted, commands
       #     ignored until end of transaction block"
     end

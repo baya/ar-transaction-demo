@@ -5,6 +5,6 @@ class Number < ActiveRecord::Base
   # self.establish_connection(pg_db)
   self.establish_connection(mysql_db)
 
-  validates :i, uniqueness: true
+  # validates :i, uniqueness: true
   
 end
