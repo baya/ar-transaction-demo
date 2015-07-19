@@ -11,52 +11,58 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150711055433) do
+ActiveRecord::Schema.define(version: 20150719124654) do
 
   create_table "account_op_logs", force: :cascade do |t|
-    t.integer  "account_id"
-    t.string   "action"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "accounts", force: :cascade do |t|
-    t.string   "name"
-    t.float    "money",      default: 0.0
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-  end
-
-  create_table "balances", force: :cascade do |t|
-    t.integer  "account_id"
-    t.float    "amount"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "courses", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "units",      default: 0
+    t.integer  "account_id", limit: 4
+    t.string   "action",     limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
 
+  create_table "accounts", force: :cascade do |t|
+    t.string   "name",       limit: 255
+    t.float    "money",      limit: 24,  default: 0.0
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+  end
+
+  create_table "balances", force: :cascade do |t|
+    t.integer  "account_id", limit: 4
+    t.float    "amount",     limit: 24
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+  end
+
+  create_table "courses", force: :cascade do |t|
+    t.string   "name",       limit: 255
+    t.integer  "units",      limit: 4,   default: 0
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+  end
+
   create_table "numbers", force: :cascade do |t|
-    t.integer  "i"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "i",          limit: 4
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
   create_table "student_courses", force: :cascade do |t|
-    t.integer  "student_id"
-    t.integer  "course_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "student_id", limit: 4
+    t.integer  "course_id",  limit: 4
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
   create_table "students", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "units",      default: 0
+    t.string   "name",       limit: 255
+    t.integer  "units",      limit: 4,   default: 0
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string   "name",       limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end

@@ -161,5 +161,88 @@ namespace :debug_transaction do
     end
   end
 
-  
+
+  task for_pg_2: ['environment'] do
+    # Suppose that we have a Number model with a unique column called 'i'.
+    Number.transaction do
+      Number.create(i: 6)
+      begin
+        # This will raise a unique constraint error...
+        Number.create!(i: 6)
+      rescue Exception => e
+        puts "+++++++++++++++"
+        puts e.message
+      end
+
+      # On PostgreSQL, the transaction is now unusable. The following
+      # statement will cause a PostgreSQL error, even though the unique
+      # constraint is no longer violated:
+      Number.create(i: 7)
+      # => "PGError: ERROR:  current transaction is aborted, commands
+      #     ignored until end of transaction block"
+    end
+  end
+
+  task for_nested_1: ['environment'] do
+    User.transaction do
+      User.create(name: 'Kotori')
+      User.transaction do
+        User.create(name: 'Nemu')
+        raise ActiveRecord::Rollback
+      end
+    end
+  end
+
+
+  task for_nested_2: ['environment'] do
+    User.transaction do
+      User.create(name: 'Kotori2')
+      User.transaction do
+        User.create(name: 'Nemu2')
+        raise 'boom!'
+      end
+    end
+  end
+
+  task for_nested_3: ['environment'] do
+    User.transaction do
+      User.create(name: 'Kotori3')
+      User.transaction(requires_new: true) do
+        User.create(name: 'Nemu3')
+        raise ActiveRecord::Rollback
+      end
+    end
+  end
+
+  task for_nested_4: ['environment'] do
+    User.transaction do
+      User.create(name: 'Kotori4')
+      begin
+        User.transaction do
+          User.create(name: 'Nemu4')
+          raise 'boom!'
+        end
+      rescue Exception => e
+        puts "!!!!!!!!!!!!!"
+        puts e.message
+      end
+    end
+  end
+
+
+  task for_nested_5: ['environment'] do
+    User.transaction do
+      User.create(name: 'Kotori5')
+      begin
+        User.transaction(requires_new: true) do
+          User.create(name: 'Nemu5')
+          raise 'boom!'
+        end
+      rescue Exception => e
+        puts "!!!!!!!!!!!!!"
+        puts e.message
+      end
+    end
+  end
+
 end
